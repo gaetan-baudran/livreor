@@ -1,0 +1,277 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --ff: "Oswald", "sans-serif";
+}
+
+body {
+  background-image: url("./asset/pulp-fiction-550x309.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+
+
+header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  width: 100%;
+  padding-top: 1.5%;
+  padding-bottom: 1.5%;
+}
+
+nav ul {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+nav ul li {
+  margin-left: 2%;
+  padding-right: 5%;
+  list-style: none;
+}
+
+a {
+  font-family: "Oswald", "sans-serif";
+  text-decoration: none;
+  letter-spacing: 0.2rem;
+  color: rgb(255, 0, 0);
+}
+
+a:hover {
+  color: yellow;
+}
+
+/* container index  */
+
+.container-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+.container-welcome > h1 {
+  padding-left: 1%;
+  font-family: "Oswald", "sans-serif";
+  font-size: 5rem;
+
+  color: wheat;
+}
+.container-welcome > h2 {
+  padding-left: 1%;
+  font-family: "Oswald", "sans-serif";
+  font-size: 5rem;
+
+  color: wheat;
+}
+
+.container-welcome h1::after {
+  content: " .";
+  font-size: 1rem;
+  color: wheat;
+}
+.container-welcome small {
+  padding-left: 5%;
+  font-family: "Oswald", "sans-serif";
+
+  color: wheat;
+}
+/* PAGE INDEX */
+
+.container-index {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 75vh;
+  background-color: wheat;
+  margin-top: 2%;
+  padding-top: 2%;
+}
+
+.container-index a img {
+  padding-top: 2%;
+  width: 64px;
+  height: 64px;
+}
+
+/* PAGE REGISTER */
+
+.container-register {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-bottom: 5%;
+}
+.container-register h1 {
+  padding-left: 1%;
+  font-family: "Oswald", "sans-serif";
+  font-size: 5rem;
+  color: wheat;
+}
+.container-register p {
+  font-family: "Oswald", "sans-serif";
+  font-size: 5rem;
+  color: wheat;
+  padding-left: 1%;
+}
+.container-register small {
+  padding-left: 5%;
+  font-family: "Oswald", "sans-serif";
+
+  color: wheat;
+}
+
+.container-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: wheat;
+  font-family: var(--ff);
+  padding-top: 2.5%;
+  padding-bottom: 2.5%;
+}
+
+.container-form hr {
+  background-color: black;
+  color: black;
+  border-color: black;
+}
+
+input[type="text"] {
+  width: 300px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  background-color: black;
+  color: beige;
+  padding-left: 2%;
+  box-sizing: border-box;
+}
+
+input[type="password"] {
+  width: 300px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  background-color: black;
+  color: beige;
+  padding-left: 2%;
+}
+
+input[type="submit"] {
+  width: 300px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  background-color: black;
+  color: beige;
+  padding-left: 2%;
+  margin-top: 5%;
+  font-family: var(--ff);
+}
+
+input[type="submit"]:hover {
+  color: brown;
+  cursor: pointer;
+}
+button {
+  width: 50%;
+  color: white;
+  background-color: black;
+  border: none;
+  border-radius: 5px;
+  height: 35px;
+  font-family: var(--ff);
+}
+
+button:hover {
+  color: red;
+  cursor: pointer;
+}
+
+/* container-commentaire */
+
+.container-comment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  /* height: 100vh; */
+
+  background-color: wheat;
+
+  color: black;
+  font-family: var(--ff);
+}
+
+textarea[name="commentaire"] {
+  resize: none;
+  overflow: auto;
+  width: 150%;
+  height: 50px;
+  background-color: black;
+}
+textarea {
+  color: wheat;
+}
+
+table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th:nth-child(1) {
+  width: 5%;
+}
+
+thead th:nth-child(2) {
+  width: 5%;
+}
+
+thead th:nth-child(3) {
+  width: 5%;
+}
+thead th:nth-child(4) {
+  width: 5%;
+}
+
+th,
+td {
+  padding: 20px;
+}
+tbody td {
+  text-align: center;
+}
+
+.container-comment p {
+  font-family: var(--ff);
+  color: white;
+}
+
+.container-delete {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 25%;
+}
+.container-delete h1 {
+  font-family: var(--ff);
+  color: wheat;
+  font-size: 5rem;
+}
