@@ -2,16 +2,11 @@
 
 echo "<br>";
 
-$connect =  mysqli_connect("localhost", "root", "", "livreor");
-
-
-
-
-
-// if ($connect->connect_error) {
-
-//     die("La connexion a échoué: " . $conn->connect_error);
-// } else {
-
-//     echo "Connexion reussis";
-// };
+try {
+    $pdo = new PDO("mysql:host=localhost;dbname=livreor", "root", "");
+    // Configurez l'option d'erreur pour déclencher des exceptions en cas d'erreur
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "Connexion réussie en utilisant PDO";
+} catch (PDOException $e) {
+    die("La connexion a échoué: " . $e->getMessage());
+}

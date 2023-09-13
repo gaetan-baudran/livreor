@@ -1,50 +1,50 @@
 <?php
 
-require("config.php"); //connection à la bbd
+require("config.php"); //connexion à la bbd
 
-session_start(); //start de session
+session_start();
 
-/* ************************ LOGIC PHP ****************** */
+/* ************************ LOGIQUE PHP ****************** */
 
 if (isset($_POST['submit'])) {
-
-
     $sess = $_SESSION['login'];
     $comment = $_POST['commentaire'];
     $mess_error = "";
     $date = date('Y/m/d H:i:s');
 
-    $req = mysqli_query($connect, "SELECT * FROM utilisateurs WHERE login='$sess'");
-    $tab_result = mysqli_fetch_all($req, MYSQLI_ASSOC);
-    $id_user = intval($tab_result[0]['id']);
-
+    // Rechercher l'utilisateur actuel par son login
+    $sql = "SELECT * FROM utilisateurs WHERE login = :login";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':login', $sess, PDO::PARAM_STR);
+    $stmt->execute();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (empty($comment)) {
-
-        $mess_error = "Veuillez saisir un commentaire"; //mess error si aucun commentaire n'est saisis 
-
+        $mess_error = "Veuillez saisir un commentaire"; // message d'erreur si aucun commentaire n'est saisi
     } else {
-
-
-        $comment = mysqli_query($connect, "INSERT INTO commentaires(commentaire,id_utilisateur,date) VALUES ('$comment','$id_user','$date')"); //requete insertion
-
+        // Insérer le commentaire dans la base de données
+        $sql = "INSERT INTO commentaires (commentaire, id_utilisateur, date) VALUES (:comment, :id_user, :date)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':comment', $comment, PDO::PARAM_STR);
+        $stmt->bindParam(':id_user', $user['id'], PDO::PARAM_INT);
+        $stmt->bindParam(':date', $date, PDO::PARAM_STR);
+        $stmt->execute();
     }
 }
 
-/* ********************* DELETE COMMENT ******************* */
+/* ********************* SUPPRIMER UN COMMENTAIRE ******************* */
 
 if (isset($_POST['delete'])) {
-
-    $req = "DELETE from commentaires WHERE commentaires.id='$_POST[delete]'";
-    $del = mysqli_query($connect, $req);
+    $commentId = $_POST['delete'];
+    $sql = "DELETE FROM commentaires WHERE id = :commentId";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':commentId', $commentId, PDO::PARAM_INT);
+    $stmt->execute();
 }
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="Fr">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -58,101 +58,73 @@ if (isset($_POST['delete'])) {
     <!-- Titre page -->
     <title>Livre d'or</title>
 </head>
-
 <body>
 
+<?php require('header.php'); ?>
 
-    <?php require('header.php'); ?>
+<div class="container-register">
+    <h1>Filmographie <?php if (isset($_SESSION['login'])) {
+        echo "<p> Acteur : " . " " . ucwords($_SESSION['login']) . "</p>";
+    } ?></h1>
+</div>
 
+<div class="container-comment">
+    <?php
+    $sql = "SELECT commentaires.date, utilisateurs.login, commentaires.commentaire, commentaires.id
+            FROM commentaires
+            INNER JOIN utilisateurs ON commentaires.id_utilisateur = utilisateurs.id
+            ORDER BY date DESC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    // Récupérez toutes les lignes sous forme de tableau associatif
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    <div class="container-register">
-        <h1>Filmographie <?php if (isset($_SESSION['login'])) {
-                                echo "<p> Acteur : " . " " . ucwords($_SESSION['login']) . "</p>";
-                            } ?></h1>
-
-    </div>
-
-
-    <div class="container-comment">
-
-        <?php
-
-        $query = mysqli_query($connect, "SELECT commentaires.date,  utilisateurs.login, commentaires.commentaire, commentaires.id FROM commentaires INNER JOIN utilisateurs ON commentaires.id_utilisateur=utilisateurs.id ORDER BY date DESC");
-        $rowcount = mysqli_num_rows($query);
-        $row = mysqli_fetch_all($query, MYSQLI_ASSOC);
-
-        for ($i = 0; $i < $rowcount; $i++) {
-            echo "
-                          <table>
-                            <thead>
-                            
-                                 <tr>
-                                    <th scope='col'>Poster par</th>
-                                    <th scope='col'>Commentaires</th>
-                                    <th scopte='col'>Date du poste</th>";
-            if (@$_SESSION['login'] == $row[$i]['login']) {
-                echo "<th scope =col'>Suppression</th>";
-            }
-
-            echo " </tr>
-                                
-                            </thead>
-                                 <tbody>
-                                    <tr>
-                                        <td>" . $row[$i]['login'] . "</td><span class='vertical-line'></span>
-                                        <td>" . $row[$i]['commentaire'] . "</td>
-                                        <td>" . $row[$i]['date'] . "</td>";
-            if (@$_SESSION['login'] == $row[$i]['login']) {
-
-                echo "<td><form action='' method='POST'><button name='delete' value=" . $row[$i]['id'] . ">Supprimer</button> </form></td>";
-            }
-
-            echo "      </tr>
-                                 </tbody>
-                        </table>
-                        ";
-
-
-
-            echo "<br>";
+    foreach ($rows as $row) {
+        echo "<table>
+                <thead>
+                    <tr>
+                        <th scope='col'>Posté par</th>
+                        <th scope='col'>Commentaire</th>
+                        <th scope='col'>Date du poste</th>";
+        if (isset($_SESSION['login']) && $_SESSION['login'] == $row['login']) {
+            echo "<th scope='col'>Suppression</th>";
         }
-
-
-        ?>
-
+        echo "</tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{$row['login']}</td>
+                        <td>{$row['commentaire']}</td>
+                        <td>{$row['date']}</td>";
+        if (isset($_SESSION['login']) && $_SESSION['login'] == $row['login']) {
+            echo "<td><form action='' method='POST'><button name='delete' value='{$row['id']}'>Supprimer</button></form></td>";
+        }
+        echo "</tr>
+                </tbody>
+              </table><br>";
+    }
+    ?>
+</div>
+<br>
+<?php if (!isset($_SESSION['login'])) { ?>
+    <div class='container-form'>
+        <p>Laissez un commentaire ? Connectez-vous sur votre profil -> <a href='connexion.php'>Connexion</a></p>
     </div>
-    <br>
-    <?php if (!isset($_SESSION['login'])) { ?>
-    <?php echo "
-            <div class='container-form'>
-                <p>Laissez un commentaire ? Connectez vous sur votre profil -> <a href='connexion.php'>Connexion</a></p>
-            </div>
-            ";
-    } ?>
+<?php } ?>
 
-    <?php if (isset($_SESSION['login'])) { ?>
-
-        <div class="container-form">
-
-            <form action="" method="POST">
-
-
-                <label for="comment">Laisser son commentaire:</label>
-                <br>
-                <br>
-                <textarea name="commentaire" id="commentaire" cols="30" rows="10"></textarea>
-                <br>
-                <br>
-                <input class='comment' type="submit" name="submit" value="Poster">
-                <br>
-                <br>
-
-                <?= "<p style='color:red;'>" . @$mess_error . "<p>" ?>
-
-            </form>
-        </div>
-
-    <?php } ?>
+<?php if (isset($_SESSION['login'])) { ?>
+    <div class="container-form">
+        <form action="" method="POST">
+            <label for="commentaire">Laissez votre commentaire :</label>
+            <br><br>
+            <textarea name="commentaire" id="commentaire" cols="30" rows="10"></textarea>
+            <br><br>
+            <input class='comment' type="submit" name="submit" value="Poster">
+            <br><br>
+            <p style='color:red;'><?= @$mess_error ?></p>
+        </form>
+    </div>
+<?php } ?>
 
 </body>
 
